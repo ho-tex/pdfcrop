@@ -412,7 +412,7 @@ Expert options:
                       An empty value or `none' uses the
                       default of the TeX engine.               ($::opt_pdfversion)
   --uncompress        creates an uncompressed pdf, 
-                      useful for debugging ($bool[$::opt_uncompress])                     
+                      useful for debugging                     ($bool[$::opt_uncompress])                     
 
 Input file: If the name is `-', then the standard input is used and
   the output file name must be explicitly given.
