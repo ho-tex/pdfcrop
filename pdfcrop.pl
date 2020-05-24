@@ -364,6 +364,7 @@ $::opt_bbox_odd   = "";
 $::opt_bbox_even  = "";
 $::opt_initex     = 0;
 $::opt_pdfversion = "auto";
+$::opt_uncompress = 0;
 
 sub usage ($) {
     my $ret = shift;
@@ -410,6 +411,8 @@ Expert options:
                       of the input PDF file.
                       An empty value or `none' uses the
                       default of the TeX engine.               ($::opt_pdfversion)
+  --uncompress        creates an uncompressed pdf, 
+                      useful for debugging ($bool[$::opt_uncompress])                     
 
 Input file: If the name is `-', then the standard input is used and
   the output file name must be explicitly given.
@@ -456,6 +459,7 @@ GetOptions(
   "bbox-even=s" => \$::opt_bbox_even,
   "restricted" => sub { $restricted = 1; },
   "pdfversion=s" => \$::opt_pdfversion,
+  "uncompress!",
 ) or usage(1);
 !$::opt_help or usage(0);
 
@@ -829,10 +833,12 @@ if ($::opt_tex eq 'luatex') {
 \fi
 END_TMP
 }
+
+my $uncompress = $::opt_uncompress ? '0 ' : '9 ';
 if ($::opt_tex eq 'pdftex') {
+ print TMP "\\pdfcompresslevel=$uncompress "; 
     print TMP <<'END_TMP_HEAD';
 \pdfoutput=1 %
-\pdfcompresslevel=0 %
 \csname pdfmapfile\endcsname{}
 \def\setpdfversion#1#2{%
   \IfUndefined{pdfobjcompresslevel}{%
@@ -914,9 +920,9 @@ END_TMP_HEAD
 }
 elsif  ($::opt_tex eq 'luatex')
   {
+    print TMP "\\pdfvariable compresslevel=$uncompress "; 
     print TMP <<'END_TMP_HEAD';
 \outputmode=1 %
-\pdfvariable compresslevel=0 %
 \pdfextension mapfile {}
 \def\setpdfversion#1#2{%
     \ifnum#1=1 %
