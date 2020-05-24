@@ -4,7 +4,7 @@ $^W=1; # turn warning on
 #
 # pdfcrop.pl
 #
-# Copyright (C) 2002, 2004, 2005, 2008-2012 Heiko Oberdiek.
+# Copyright (C) 2002, 2004, 2005, 2008-2020 Heiko Oberdiek.
 #
 # This program may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.2
