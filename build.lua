@@ -5,6 +5,7 @@ module = "pdfcrop"
 
 textfiles = {"README"}
 unpackfiles = {'pdfcrop.dtx'}
+sourcefiles = {"pdfcrop.pl"}
 installfiles={"*.pl"}
 scriptfiles={"*.pl"}
 
