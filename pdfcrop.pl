@@ -22,10 +22,10 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.38";
-my $date        = "2012/11/02";
+my $version     = "1.39";
+my $date        = "2020/05/24";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2002-2012 by $author.";
+my $copyright   = "Copyright (c) 2002-2020 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -107,6 +107,8 @@ my $copyright   = "Copyright (c) 2002-2012 by $author.";
 #                   * Fix for broken v1.36.
 # 2012/11/02 v1.38: * Fix for unsufficient cleanup, if function `cleanup' is
 #                     prematurely called in `eval' for `symlink' checking.
+# 2020/05/24 v1.39: * adapted to pdfversion 2.0
+#
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -401,8 +403,8 @@ Expert options:
                       with origin at the lower left corner
   --bbox-odd          Same as --bbox, but for odd pages only   ($::opt_bbox_odd)
   --bbox-even         Same as --bbox, but for even pages only  ($::opt_bbox_even)
-  --pdfversion <1.x> | auto | none
-                      Set the PDF version to 1.x, 1 < x < 8.
+  --pdfversion <x.y> | auto | none
+                      Set the PDF version to x.y, x= 1 or 2, y=0-9.
                       If `auto' is given as value, then the
                       PDF version is taken from the header
                       of the input PDF file.
@@ -471,10 +473,12 @@ print $title;
 print "* Restricted mode: ", ($restricted ? "enabled" : "disabled"), "\n"
         if $::opt_debug;
 
-$::opt_pdfversion =~ /^(|none|auto|1\.([2-7]))$/
+$::opt_pdfversion =~ /^(|none|auto|(([1-2])\.(\d)))$/
         or die "!!! Error: Invalid value `$::opt_pdfversion' for option `--pdfversion'!\n";
 print "* Option `pdfversion': $::opt_pdfversion\n" if $::opt_debug;
 $::opt_pdfversion = $2 if $2;
+$::opt_pdfmajorversion = $3 if $2;
+$::opt_pdfminorversion = $4 if $2;
 $::opt_pdfversion = '' if $::opt_pdfversion eq 'none';
 
 find_ghostscript();
@@ -721,16 +725,19 @@ if ($::opt_pdfversion eq 'auto') {
             or die sprintf "!!! Error: Cannot read the header of `%s' failed (%s)!\n",
                            $inputfilesafe, exterr;
     close(IN);
-    if ($buf =~ /%PDF-1.([0-7])\s/) {
+    if ($buf =~ /%PDF-((\d).(\d))\s/) {
         $::opt_pdfversion = $1;
-        print "* PDF header: %PDF-1.$::opt_pdfversion\n" if $::opt_verbose;
-        $::opt_pdfversion = 2 if $::opt_pdfversion < 2;
+        $::opt_pdfmajorversion = $2;
+        $::opt_pdfminorversion = $3;
+        print "* PDF header: %PDF-$::opt_pdfversion\n" if $::opt_verbose;
+        $::opt_pdfminorversion = 2 if ($::opt_pdfmajorversion < 2 && $::opt_pdfminorversion < 2);
+        $::opt_pdfversion = $::opt_pdfmajorversion . '.' . $::opt_pdfminorversion;
     }
     else {
         die "!!! Error: Cannot find PDF header of `$inputfilesafe'!\n";
     }
 }
-print '* Using PDF minor version: ',
+print '* Using PDF version: ',
       ($::opt_pdfversion ? $::opt_pdfversion : "engine's default"),
       "\n" if $::opt_debug;
 
@@ -870,24 +877,28 @@ END_TMP
 if ($::opt_tex eq 'pdftex' or $::opt_tex eq 'luatex') {
     print TMP <<'END_TMP_HEAD';
 \pdfoutput=1 %
-\pdfcompresslevel=9 %
+\pdfcompresslevel=0 %
 \csname pdfmapfile\endcsname{}
-\def\setpdfversion#1{%
+\def\setpdfversion#1#2{%
   \IfUndefined{pdfobjcompresslevel}{%
   }{%
-    \ifnum#1<5 %
-      \pdfobjcompresslevel=0 %
-    \else
-      \pdfobjcompresslevel=2 %
-    \fi
+    \ifnum#1=1 %
+     \ifnum#2<5
+       \pdfobjcompresslevel=0 %
+     \else
+       \pdfobjcompresslevel=2 %
+     \fi
+   \fi 
   }%
   \IfUndefined{pdfminorversion}{%
     \IfUndefined{pdfoptionpdfminorversion}{%
     }{%
-      \pdfoptionpdfminorversion=#1\relax
+      \pdfoptionpdfminorversion=#2\relax
     }%
   }{%
-    \pdfminorversion=#1\relax
+    \pdfminorversion=#2\relax
+    \IfUndefined{pdfmajorversion}{}
+      {\pdfmajorversion=#1\relax}%
   }%
 }
 \def\page #1 [#2 #3 #4 #5]{%
@@ -943,7 +954,7 @@ if ($::opt_tex eq 'pdftex' or $::opt_tex eq 'luatex') {
   }%
 }
 END_TMP_HEAD
-    print TMP "\\setpdfversion{$::opt_pdfversion}\n" if $::opt_pdfversion;
+    print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;
 }
 else { # XeTeX
     print TMP <<'END_TMP_HEAD';
@@ -1183,7 +1194,7 @@ if ($::opt_pdfversion) {
     read PDF, $header, 9
             or die sprintf "!!! Error: Cannot read header of `%s' (%s)!\n",
                            "$tmp.pdf", exterr;
-    $header =~ /^%PDF-1\.(\d)\s$/ or die "!!! Error: Cannot find header of `$tmp.pdf'!\n";
+    $header =~ /^%PDF-(\d\.\d)\s$/ or die "!!! Error: Cannot find header of `$tmp.pdf'!\n";
     if ($1 ne $::opt_pdfversion) {
         seek PDF, 7, 0
                 or die sprintf "!!! Error: Cannot seek in `%s' (%s)!\n",
@@ -1191,7 +1202,7 @@ if ($::opt_pdfversion) {
         print PDF $::opt_pdfversion
                 or die sprintf "!!! Error: Cannot write in `%s' (%s)!\n",
                                "$tmp.pdf", exterr;
-        print "* PDF version correction in output file: 1.$::opt_pdfversion\n"
+        print "* PDF version correction in output file: $::opt_pdfversion\n"
                 if $::opt_debug;
     }
     close(PDF);
