@@ -826,55 +826,10 @@ if ($::opt_tex eq 'luatex') {
 \expandafter\ifx\csname directlua\endcsname\relax
   \errmessage{LuaTeX not found!}%
 \else
-  \begingroup
-    \newlinechar=10 %
-    \endlinechar=\newlinechar %
-    \ifnum0%
-        \directlua{%
-          if tex.enableprimitives then
-            tex.enableprimitives('TEST', {
-              'luatexversion',
-              'pdfoutput',
-              'pdfcompresslevel',
-              'pdfhorigin',
-              'pdfvorigin',
-              'pdfpagewidth',
-              'pdfpageheight',
-              'pdfmapfile',
-              'pdfximage',
-              'pdflastximage',
-              'pdfrefximage',
-              'pdfminorversion',
-              'pdfobjcompresslevel',
-            })
-            tex.print('1')
-          end
-        }%
-        \ifx\TESTluatexversion\UnDeFiNeD\else 1\fi %
-        =11 %
-      \global\let\luatexversion\luatexversion %
-      \global\let\pdfoutput\TESTpdfoutput %
-      \global\let\pdfcompresslevel\TESTpdfcompresslevel %
-      \global\let\pdfhorigin\TESTpdfhorigin %
-      \global\let\pdfvorigin\TESTpdfvorigin %
-      \global\let\pdfpagewidth\TESTpdfpagewidth %
-      \global\let\pdfpageheight\TESTpdfpageheight %
-      \global\let\pdfmapfile\TESTpdfmapfile %
-      \global\let\pdfximage\TESTpdfximage %
-      \global\let\pdflastximage\TESTpdflastximage %
-      \global\let\pdfrefximage\TESTpdfrefximage %
-      \global\let\pdfminorversion\TESTpdfminorversion %
-      \global\let\pdfobjcompresslevel\TESTpdfobjcompresslevel %
-    \else %
-      \errmessage{%
-        Missing \string\luatexversion %
-      }%
-    \fi %
-  \endgroup %
 \fi
 END_TMP
 }
-if ($::opt_tex eq 'pdftex' or $::opt_tex eq 'luatex') {
+if ($::opt_tex eq 'pdftex') {
     print TMP <<'END_TMP_HEAD';
 \pdfoutput=1 %
 \pdfcompresslevel=0 %
@@ -957,6 +912,78 @@ if ($::opt_tex eq 'pdftex' or $::opt_tex eq 'luatex') {
 END_TMP_HEAD
     print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;
 }
+elsif  ($::opt_tex eq 'luatex')
+  {
+    print TMP <<'END_TMP_HEAD';
+\outputmode=1 %
+\pdfvariable compresslevel=0 %
+\pdfextension mapfile {}
+\def\setpdfversion#1#2{%
+    \ifnum#1=1 %
+     \ifnum#2<5
+       \pdfvariable objcompresslevel=0 %
+     \else
+       \pdfvariable objcompresslevel=2 %
+     \fi
+    \fi  
+    \pdfvariable minorversion= #2
+    \pdfvariable majorversion= #1 
+}
+\def\page #1 [#2 #3 #4 #5]{%
+  \count0=#1\relax
+  \setbox0=\hbox{%
+    \saveimageresource page #1 mediabox{\pdffile}%
+    \useimageresource\lastsavedimageresourceindex
+  }%
+  \pdfvariable horigin=-#2bp\relax
+  \pdfvariable vorigin=#3bp\relax
+  \pagewidth=#4bp\relax
+  \advance\pagewidth by -#2bp\relax
+  \pageheight=#5bp\relax
+  \advance\pageheight by -#3bp\relax
+  \ht0=\pageheight
+  \shipout\box0\relax
+}
+\def\pageclip #1 [#2 #3 #4 #5][#6 #7 #8 #9]{%
+  \count0=#1\relax
+  \dimen0=#4bp\relax \advance\dimen0 by -#2bp\relax
+  \edef\imagewidth{\the\dimen0}%
+  \dimen0=#5bp\relax \advance\dimen0 by -#3bp\relax
+  \edef\imageheight{\the\dimen0}%
+  \saveimageresource page #1 mediabox{\pdffile}%
+  \setbox0=\hbox{%
+    \kern -#2bp\relax
+    \lower #3bp\hbox{\useimageresource\lastsavedimageresourceindex}%
+  }%
+  \wd0=\imagewidth\relax
+  \ht0=\imageheight\relax
+  \dp0=0pt\relax
+  \pdfvariable horigin=#6pt\relax
+  \pdfvariable vorigin=#7bp\relax
+  \pagewidth=\imagewidth
+  \advance\pagewidth by #6bp\relax
+  \advance\pagewidth by #8bp\relax
+  \pageheight=\imageheight\relax
+  \advance\pageheight by #7bp\relax
+  \advance\pageheight by #9bp\relax
+  \saveboxresource0\relax
+  \shipout\hbox{\useboxresource\lastsavedboxresourceindex}%
+}%
+\def\pageinclude#1{%
+  \pdfvariable horigin=0pt\relax
+  \pdfvariable vorigin=0pt\relax
+  \saveimageresource page #1 mediabox{\pdffile}%
+  \setbox0=\hbox{\useimageresource\lastsavedimageresourceindex}%
+  \pagewidth=\wd0\relax
+  \pageheight=\ht0\relax
+  \advance\pageheight by \dp0\relax
+  \shipout\hbox{%
+    \raise\dp0\box0\relax
+  }%
+}
+END_TMP_HEAD
+    print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;    
+}  
 else { # XeTeX
     print TMP <<'END_TMP_HEAD';
 \expandafter\ifx\csname XeTeXpdffile\endcsname\relax
