@@ -897,7 +897,8 @@ if ($::opt_tex eq 'pdftex' or $::opt_tex eq 'luatex') {
     }%
   }{%
     \pdfminorversion=#2\relax
-    \IfUndefined{pdfmajorversion}{}
+    \IfUndefined{pdfmajorversion}{%
+      \ifnum#2=0 \pdfminorversion=5\fi}
       {\pdfmajorversion=#1\relax}%
   }%
 }
