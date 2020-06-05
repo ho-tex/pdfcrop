@@ -1230,7 +1230,7 @@ if ($::opt_pdfversion) {
                            "$tmp.pdf", exterr;
     $header =~ /^%PDF-(\d\.\d)\s$/ or die "!!! Error: Cannot find header of `$tmp.pdf'!\n";
     if ($1 ne $::opt_pdfversion) {
-        seek PDF, 7, 0
+        seek PDF, 5, 0
                 or die sprintf "!!! Error: Cannot seek in `%s' (%s)!\n",
                                "$tmp.pdf", exterr;
         print PDF $::opt_pdfversion
