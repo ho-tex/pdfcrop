@@ -1,4 +1,4 @@
-README for pdfcrop 2012/11/02 v1.38
+README for pdfcrop 2020/05/24 v1.39
 
 TABLE OF CONTENTS
 =================
@@ -25,6 +25,7 @@ PDF file with removed margins.
 B. COPYRIGHT, DISCLAIMER, LICENSE
 =================================
 Copyright (C) 2002, 2004, 2005, 2008-2012 Heiko Oberdiek.
+              2020                        Oberdiek Package Support Group
 
 This program may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.2
@@ -132,6 +133,7 @@ H. AUTHOR
 =========
 Heiko Oberdiek
 Email: heiko.oberdiek at googlemail.com
+https://github.com/ho-tex/pdfcrop
 
 I. ACKNOWLEDGEMENT
 ==================
@@ -148,7 +150,8 @@ J. QUESTIONS, SUGGESTED IMPROVEMENTS
 ====================================
 If you have questions, problems with `pdfcrop', error reports,
 if you have improvements or want to have additional features,
-please send them to the author.
+please send them to the author or add an issue to
+https://github.com/ho-tex/pdfcrop
 
 My environment for developing and testing:
 * linux, SuSE 9.0
@@ -249,7 +252,8 @@ L. HISTORY
                   * Fix for broken v1.36.
 2012/11/02 v1.38: * Fix for unsufficient cleanup, if function `cleanup' is
                     prematurely called in `eval' for `symlink' checking.
-
+2020/05/24 v1.39: * adapted to pdfversion 2.0, corrected luatex support,
+                      corrected a problem with xetex.
 
 M. TODO
 =======

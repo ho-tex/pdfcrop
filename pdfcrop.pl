@@ -107,8 +107,10 @@ my $copyright   = "Copyright (c) 2002-2020 by $author.";
 #                   * Fix for broken v1.36.
 # 2012/11/02 v1.38: * Fix for unsufficient cleanup, if function `cleanup' is
 #                     prematurely called in `eval' for `symlink' checking.
-# 2020/05/24 v1.39: * adapted to pdfversion 2.0
+#2020/05/24 v1.39: * adapted to pdfversion 2.0, corrected luatex support,
+#                      corrected a problem with xetex.
 #
+
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
