@@ -3,15 +3,13 @@
 
 module = "pdfcrop"
 
-textfiles = {"README"}
-unpackfiles = {'pdfcrop.dtx'}
+textfiles = {"README","*.md","LICENCE"}
 sourcefiles = {"pdfcrop.pl"}
 installfiles={"*.pl"}
 scriptfiles={"*.pl"}
-
+ctanreadme ="README.md"
  
 packtdszip  = false
-
 
 
 function update_tag(file,content,tagname,tagdate)
