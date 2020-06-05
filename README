@@ -19,7 +19,7 @@ M. ToDo
 A. DESCRIPTION
 ==============
 PDFCROP takes a PDF file as input, calculates the BoundingBox
-for each page by the help of ghostscript and generates a output
+for each page by the help of ghostscript and generates an output
 PDF file with removed margins.
 
 B. COPYRIGHT, DISCLAIMER, LICENSE
