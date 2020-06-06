@@ -175,7 +175,7 @@ sub find_ghostscript () {
     print "* Arch name: $archname\n" if $::opt_debug;
     print "* System: $system\n" if $::opt_debug;
     my %candidates = (
-        'unix' => [qw|gs gsc|],
+        'unix' => [qw|gs gsc gswin64c gswin32c|],
         'dos' => [qw|gs386 gs|],
         'os2' => [qw|gsos2 gs|],
         'win' => [qw|gswin32c gs|],
