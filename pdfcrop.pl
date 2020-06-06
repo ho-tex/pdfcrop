@@ -997,6 +997,10 @@ else { # XeTeX
 \expandafter\ifx\csname XeTeXpdffile\endcsname\relax
   \errmessage{XeTeX not found or too old!}%
 \fi
+\def\setpdfversion#1#2{%
+  \special{pdf:majorversion #1}%
+  \special{pdf:minorversion #2}}
+  
 \def\page #1 [#2 #3 #4 #5]{%
   \count0=#1\relax
   \setbox0=\hbox{%
@@ -1037,6 +1041,7 @@ else { # XeTeX
   }%
 }
 END_TMP_HEAD
+print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion; 
 }
 
 print "* Running ghostscript for BoundingBox calculation ...\n"
