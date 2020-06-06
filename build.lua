@@ -3,7 +3,7 @@
 
 module = "pdfcrop"
 
-textfiles = {"README","*.md","LICENCE"}
+textfiles = {"README.md","LICENCE"}
 sourcefiles = {"pdfcrop.pl"}
 installfiles={"*.pl"}
 scriptfiles={"*.pl"}
