@@ -77,9 +77,9 @@ Unix
 * Move the file to a directory where the shell can find it
   (environment variable PATH, e.g. /usr/local/bin/).
 
-   Dos/Windows
+Dos/Windows
    * See requirements. I do not expect that the perl script
-     run under DOS.
+     runs under DOS.
 
 ### 2\. Restricted program version `rpdfcrop`
 
