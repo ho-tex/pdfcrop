@@ -7,14 +7,9 @@ $^W=1; # turn warning on
 # Copyright (C) 2002, 2004, 2005, 2008-2020 Heiko Oberdiek.
 #
 # This program may be distributed and/or modified under the
-# conditions of the LaTeX Project Public License, either version 1.2
-# of this license or (at your option) any later version.
-# The latest version of this license is in
-#   http://www.latex-project.org/lppl.txt
-# and version 1.2 or later is part of all distributions of LaTeX
-# version 1999/12/01 or later.
+# conditions of the LaTeX Project Public License, version 1.3c or later.
 #
-# See file "README" for a list of files that belong to this project.
+# See file "README.md" for a list of files that belong to this project.
 #
 # This file "pdfcrop.pl" may be renamed to "pdfcrop"
 # for installation purposes.
@@ -22,9 +17,9 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.39";
-my $date        = "2020/05/24";
-my $author      = "Heiko Oberdiek";
+my $version     = "1.40";
+my $date        = "2020/06/06";
+my $author      = "Heiko Oberdiek, Oberdiek Package Support Group";
 my $copyright   = "Copyright (c) 2002-2020 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
@@ -107,9 +102,11 @@ my $copyright   = "Copyright (c) 2002-2020 by $author.";
 #                   * Fix for broken v1.36.
 # 2012/11/02 v1.38: * Fix for unsufficient cleanup, if function `cleanup' is
 #                     prematurely called in `eval' for `symlink' checking.
-#2020/05/24 v1.39: * adapted to pdfversion 2.0, corrected luatex support,
+# 2020/05/24 v1.39: * adapted to pdfversion 2.0, corrected luatex support,
 #                      corrected a problem with xetex.
-#
+# 2020/06/06 v1.40: * improved ghostscript detection on windows when a bash is used
+#                      added direct pdf version support to xetex. 
+
 
 
 ### program identification
