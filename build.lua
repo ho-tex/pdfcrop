@@ -37,58 +37,62 @@ end
 
 end
 
--- Create make_temp_dir() function
-local function make_temp_dir()
-  local tmpname = os.tmpname()
-  tempdir = basename(tmpname)
-  print("** Creating the temporary directory ./"..tempdir)
-  errorlevel = mkdir(tempdir)
-  if errorlevel ~= 0 then
-    error("** Error!!: The ./"..tempdir.." directory could not be created")
-    return errorlevel
+-- make_tmp_dir() function
+function make_tmp_dir()
+  tmpdir = "temp"
+  if direxists(tmpdir) then
+    print("** Remove files in temporary directory ./"..tmpdir)
+    cleandir(tmpdir)
+  else
+    print("** Creating the temporary directory ./"..tmpdir)
+    errorlevel = mkdir(tmpdir)
+    if errorlevel ~= 0 then
+      error("** Error!!: The ./"..tmpdir.." directory could not be created")
+      return errorlevel
+    end
   end
 end
 
 -- Add "testpkg" target to l3build CLI
 if options["target"] == "testpkg" then
-  make_temp_dir()
+  make_tmp_dir()
   -- Copy script
   local pdfcrop = "pdfcrop.pl"
-  print("** Copying "..pdfcrop.." from "..maindir.." to ./"..tempdir)
-  errorlevel = cp(pdfcrop, maindir, tempdir)
+  print("** Copying "..pdfcrop.." from "..maindir.." to ./"..tmpdir)
+  errorlevel = cp(pdfcrop, maindir, tmpdir)
   if errorlevel ~= 0 then
-    error("** Error!!: Can't copy "..pdfcrop.." from "..maindir.." to /"..tempdir)
+    error("** Error!!: Can't copy "..pdfcrop.." from "..maindir.." to ./"..tmpdir)
     return errorlevel
   end
   -- Check syntax
   print("** Running: perl -cw "..pdfcrop)
-  errorlevel = run(tempdir, "perl -cw "..pdfcrop)
+  errorlevel = run(tmpdir, "perl -cw "..pdfcrop)
   if errorlevel ~= 0 then
     error("** Error!!: perl -cw "..script)
     return errorlevel
   end
   -- Copy test files
-  print("** Copying files from ./tests to ./"..tempdir)
-  errorlevel = cp("*.*", "./tests", tempdir)
+  print("** Copying files from ./tests to ./"..tmpdir)
+  errorlevel = cp("*.*", "./tests", tmpdir)
   if errorlevel ~= 0 then
-    error("** Error!!: Can't copy files from ./tests to /"..tempdir)
+    error("** Error!!: Can't copy files from ./tests to /"..tmpdir)
   end
   -- Run a simple test
   print("** Running: perl "..pdfcrop.." --luatex --margins 0 version-test.pdf")
-  errorlevel = run(tempdir, "perl "..pdfcrop.." --luatex --margins 0 version-test.pdf")
+  errorlevel = run(tmpdir, "perl "..pdfcrop.." --luatex --margins 0 version-test.pdf")
   if errorlevel ~= 0 then
     error("** Error!!: perl "..pdfcrop.." --luatex --margins 0 version-test.pdf")
     return errorlevel
   end
   -- We can copy the output or do other operations
-  print("** Copying result from ./"..tempdir.." to "..maindir)
-  errorlevel = cp("*-crop.pdf", tempdir, maindir)
+  print("** Copying result from ./"..tmpdir.." to "..maindir)
+  errorlevel = cp("*-crop.pdf", tmpdir, maindir)
   if errorlevel ~= 0 then
-    error("** Error!!: Can't copy files from ./"..tempdir.." to "..maindir)
+    error("** Error!!: Can't copy files from ./"..tmpdir.." to "..maindir)
   end
-  -- Clean files
-  print("** Remove temporary directory ./"..tempdir)
-  --cleandir(tempdir)
-  --lfs.rmdir(tempdir)
+  -- If are OK, clean files and temp dir
+  print("** Remove temporary directory ./"..tmpdir)
+  cleandir(tmpdir)
+  lfs.rmdir(tmpdir)
   os.exit()
 end
