@@ -168,19 +168,19 @@ sub find_ghostscript () {
     $system = 'win' if $^O =~ /mswin32/i;
     $system = 'cygwin' if $^O =~ /cygwin/i;
     $system = 'msys' if $^O =~ /msys/i;
-    $system = 'miktex' if defined $ENV{"TEXSYSTEM"} and
-                          $ENV{"TEXSYSTEM"} =~ /miktex/i;
+    $system = 'miktex' if defined $ENV{'TEXSYSTEM'} and
+                          $ENV{'TEXSYSTEM'} =~ /miktex/i;
     print "* OS name: $^O\n" if $::opt_debug;
     print "* Arch name: $archname\n" if $::opt_debug;
     print "* System: $system\n" if $::opt_debug;
     my %candidates = (
         'unix' => [qw|gs gsc|],
-        'dos' => [qw|gs386 gs|],
+        'dos' => [qw|gs386|],
         'os2' => [qw|gsos2 gs|],
-        'win' => [qw|gswin32c gs|],
+        'win' => [qw|gswin32c|],
         'msys'   => [qw|gswin32c gswin64c|],
         'cygwin' => [qw|gs|],
-        'miktex' => [qw|mgs gswin32c gs|]
+        'miktex' => [qw|mgs gswin32c|]
     );
     if ($system eq 'win' or $system eq 'miktex') {
         if ($archname =~ /mswin32-x64/i) {
@@ -321,7 +321,7 @@ sub SearchRegistry () {
 
 ### This part is only necessary if you're using Git on windows and don't
 ### have gs configured in PATH. Git for windows don't have a Win32::TieRegistry
-### module fro perl (is not supported in the current versions of msys).
+### module for perl (is not supported in the current versions of msys).
 sub Searchbyregquery (){
     use Env qw(PATH);
     my $found = 0;
