@@ -68,7 +68,7 @@ if options["target"] == "testpkg" then
   print("** Running: perl -cw "..pdfcrop)
   errorlevel = run(tmpdir, "perl -cw "..pdfcrop)
   if errorlevel ~= 0 then
-    error("** Error!!: perl -cw "..script)
+    error("** Error!!: perl -cw "..pdfcrop)
     return errorlevel
   end
   -- Copy test files
@@ -90,7 +90,7 @@ if options["target"] == "testpkg" then
   if errorlevel ~= 0 then
     error("** Error!!: Can't copy files from ./"..tmpdir.." to "..maindir)
   end
-  -- If are OK, clean files and temp dir
+  -- If are OK, clean files and remove temp dir
   print("** Remove temporary directory ./"..tmpdir)
   cleandir(tmpdir)
   lfs.rmdir(tmpdir)
