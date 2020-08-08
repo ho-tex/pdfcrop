@@ -18,9 +18,9 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.40";
-my $date        = "2020/06/06";
-my $author      = "Heiko Oberdiek, Oberdiek Package Support Group";
+my $version     = '1.40';
+my $date        = '2020/06/06';
+my $author      = 'Heiko Oberdiek, Oberdiek Package Support Group';
 my $copyright   = "Copyright (c) 2002-2020 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
@@ -106,7 +106,7 @@ my $copyright   = "Copyright (c) 2002-2020 by $author.";
 # 2020/05/24 v1.39: * adapted to pdfversion 2.0, corrected luatex support,
 #                      corrected a problem with xetex.
 # 2020/06/06 v1.40: * improved ghostscript detection on windows when a bash is used
-#                      added direct pdf version support to xetex. 
+#                      added direct pdf version support to xetex.
 
 
 
@@ -114,7 +114,7 @@ my $copyright   = "Copyright (c) 2002-2020 by $author.";
 my $title = "$program $version, $date - $copyright\n";
 
 ### error strings
-my $Error = "!!! Error:"; # error prefix
+my $Error = '!!! Error:'; # error prefix
 
 ### make ENV safer
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
@@ -122,7 +122,7 @@ delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 # Windows detection (no SIGHUP)
 my $Win = 0;
 $Win = 1 if $^O =~ /mswin32/i;
-$Win = 1 if $^O =~ /cygwin/i;
+
 use Config;
 my $archname = $Config{'archname'};
 $archname = 'unknown' unless defined $Config{'archname'};
@@ -163,24 +163,26 @@ sub find_ghostscript () {
                 (defined($Config{'d_fork'}) ? 'yes' : 'no');
     }
     my $system = 'unix';
-    $system = "dos" if $^O =~ /dos/i;
-    $system = "os2" if $^O =~ /os2/i;
-    $system = "win" if $^O =~ /mswin32/i;
-    $system = "cygwin" if $^O =~ /cygwin/i;
-    $system = "miktex" if defined($ENV{"TEXSYSTEM"}) and
-                          $ENV{"TEXSYSTEM"} =~ /miktex/i;
+    $system = 'dos' if $^O =~ /dos/i;
+    $system = 'os2' if $^O =~ /os2/i;
+    $system = 'win' if $^O =~ /mswin32/i;
+    $system = 'cygwin' if $^O =~ /cygwin/i;
+    $system = 'msys' if $^O =~ /msys/i;
+    $system = 'miktex' if defined $ENV{'TEXSYSTEM'} and
+                          $ENV{'TEXSYSTEM'} =~ /miktex/i;
     print "* OS name: $^O\n" if $::opt_debug;
     print "* Arch name: $archname\n" if $::opt_debug;
     print "* System: $system\n" if $::opt_debug;
     my %candidates = (
-        'unix' => [qw|gs gsc gswin64c gswin32c|],
-        'dos' => [qw|gs386 gs|],
+        'unix' => [qw|gs gsc|],
+        'dos' => [qw|gs386|],
         'os2' => [qw|gsos2 gs|],
-        'win' => [qw|gswin32c gs|],
-        'cygwin' => [qw|gs gswin32c|],
-        'miktex' => [qw|mgs gswin32c gs|]
+        'win' => [qw|gswin32c|],
+        'msys'   => [qw|gswin32c gswin64c|],
+        'cygwin' => [qw|gs|],
+        'miktex' => [qw|mgs gswin32c|]
     );
-    if ($system eq 'win' or $system eq 'cygwin' or $system eq 'miktex') {
+    if ($system eq 'win' or $system eq 'miktex') {
         if ($archname =~ /mswin32-x64/i) {
             my @a = ();
             foreach my $name (@{$candidates{$system}}) {
@@ -195,6 +197,7 @@ sub find_ghostscript () {
         'dos' => '.exe',
         'os2' => '.exe',
         'win' => '.exe',
+        'msys'   => '.exe',
         'cygwin' => '.exe',
         'miktex' => '.exe'
     );
@@ -220,6 +223,9 @@ sub find_ghostscript () {
     if (not $found and $Win) {
         $found = SearchRegistry();
     }
+    if (not $found and $system eq 'msys') {
+        $found = Searchbyregquery();
+    }
     if ($found) {
         print "* Autodetected ghostscript command: $::opt_gscmd\n" if $::opt_debug;
     }
@@ -231,7 +237,8 @@ sub find_ghostscript () {
 
 sub SearchRegistry () {
     my $found = 0;
-    eval 'use Win32::TieRegistry qw|KEY_READ REG_SZ|;';
+    # The module Win32::TieRegistry not aviable in cygwin and msys (git win)
+    eval 'use Win32::TieRegistry qw|KEY_READ REG_SZ|';
     if ($@) {
         if ($::opt_debug) {
             print "* Registry lookup for Ghostscript failed:\n";
@@ -308,6 +315,61 @@ sub SearchRegistry () {
         print "* Found (via registry): $::opt_gscmd\n" if $::opt_debug;
         $found = 1;
         last;
+    }
+    return $found;
+}
+
+### This part is only necessary if you're using Git on windows and don't
+### have gs configured in PATH. Git for windows don't have a Win32::TieRegistry
+### module for perl (is not supported in the current versions of msys).
+sub Searchbyregquery (){
+    use Env qw(PATH);
+    my $found = 0;
+    my $gs_regkey;
+    my $opt_reg = '//s //v';
+    print "* Search Ghostscript in Windows registry under msys:\n" if $::opt_debug;
+    # search for x64 version key in reg
+    $gs_regkey = qx{reg query "HKLM\\Software\\GPL Ghostscript" $opt_reg GS_DLL};
+    if ($? == 0) {
+        print "* Registry entry found for GS_DLL (64 bits version)\n" if $::opt_debug;
+    }
+    else {
+        # search for x32 version key in reg
+        $gs_regkey = qx{reg query "HKLM\\Software\\Wow6432Node\\GPL Ghostscript" $opt_reg GS_DLL};
+        if ($? == 0) {
+            print "* Registry entry found for GS_DLL (32 bits version)\n" if $::opt_debug;
+        }
+    }
+    my ($gs_find) = $gs_regkey =~ m/(?:\s* GS_DLL \s* REG_SZ \s*) (.+?)(?:\.dll.+?\R)/s;
+    if ($gs_find) {
+        my ($gs_vol, $gs_path, $gs_ver) = $gs_find =~ m/
+                                                        (\w{1})(?:\:)   # volumen
+                                                        (.+?)           # path to executable
+                                                        (?:\\gsdll)     # LIB
+                                                        (\d{2})         # Version
+                                                      /xs;
+        # Adjust
+        $gs_vol = lc($gs_vol);
+        $gs_path = '/'.$gs_vol.$gs_path;
+        $gs_path =~ s|\\|/|gmsxi;
+        # Add to PATH
+        print "* Add $gs_path to PATH for current session\n" if $::opt_debug;
+        $PATH .= ":$gs_path";
+        # Set executable
+        $::opt_gscmd = 'gswin'.$gs_ver.'c';
+        print "* Found (via reg query): $::opt_gscmd\n" if $::opt_debug;
+        $found = 1;
+    }
+    if ($@) {
+        if ($::opt_debug) {
+            print "* Registry lookup for Ghostscript by reg query failed:\n";
+            my $msg = $@;
+            $msg =~ s/\s+$//;
+            foreach (split /\r?\n/, $msg) {
+                print " $_\n";
+            }
+        }
+        return $found;
     }
     return $found;
 }
@@ -411,8 +473,8 @@ Expert options:
                       of the input PDF file.
                       An empty value or `none' uses the
                       default of the TeX engine.               ($::opt_pdfversion)
-  --uncompress        creates an uncompressed pdf, 
-                      useful for debugging                     ($bool[$::opt_uncompress])                     
+  --uncompress        creates an uncompressed pdf,
+                      useful for debugging                     ($bool[$::opt_uncompress])
 
 Input file: If the name is `-', then the standard input is used and
   the output file name must be explicitly given.
@@ -836,7 +898,7 @@ END_TMP
 
 my $uncompress = $::opt_uncompress ? '0 ' : '9 ';
 if ($::opt_tex eq 'pdftex') {
- print TMP "\\pdfcompresslevel=$uncompress "; 
+ print TMP "\\pdfcompresslevel=$uncompress ";
     print TMP <<'END_TMP_HEAD';
 \pdfoutput=1 %
 \csname pdfmapfile\endcsname{}
@@ -849,7 +911,7 @@ if ($::opt_tex eq 'pdftex') {
      \else
        \pdfobjcompresslevel=2 %
      \fi
-   \fi 
+   \fi
   }%
   \IfUndefined{pdfminorversion}{%
     \IfUndefined{pdfoptionpdfminorversion}{%
@@ -920,7 +982,7 @@ END_TMP_HEAD
 }
 elsif  ($::opt_tex eq 'luatex')
   {
-    print TMP "\\pdfvariable compresslevel=$uncompress "; 
+    print TMP "\\pdfvariable compresslevel=$uncompress ";
     print TMP <<'END_TMP_HEAD';
 \outputmode=1 %
 \pdfextension mapfile {}
@@ -931,9 +993,9 @@ elsif  ($::opt_tex eq 'luatex')
      \else
        \pdfvariable objcompresslevel=2 %
      \fi
-    \fi  
+    \fi
     \pdfvariable minorversion= #2
-    \pdfvariable majorversion= #1 
+    \pdfvariable majorversion= #1
 }
 \def\page #1 [#2 #3 #4 #5]{%
   \count0=#1\relax
@@ -988,8 +1050,8 @@ elsif  ($::opt_tex eq 'luatex')
   }%
 }
 END_TMP_HEAD
-    print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;    
-}  
+    print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;
+}
 else { # XeTeX
     print TMP <<'END_TMP_HEAD';
 \expandafter\ifx\csname XeTeXpdffile\endcsname\relax
@@ -998,7 +1060,7 @@ else { # XeTeX
 \def\setpdfversion#1#2{%
   \special{pdf:majorversion #1}%
   \special{pdf:minorversion #2}}
-  
+
 \def\page #1 [#2 #3 #4 #5]{%
   \count0=#1\relax
   \setbox0=\hbox{%
@@ -1039,7 +1101,7 @@ else { # XeTeX
   }%
 }
 END_TMP_HEAD
-print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion; 
+print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;
 }
 
 print "* Running ghostscript for BoundingBox calculation ...\n"
