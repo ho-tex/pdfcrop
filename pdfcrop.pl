@@ -350,7 +350,6 @@ $::opt_version    = 0;
 $::opt_help       = 0;
 $::opt_debug      = 0;
 $::opt_verbose    = 0;
-$::opt_quiet      = 0;
 $::opt_pdftexcmd  = "pdftex";
 $::opt_xetexcmd   = "xetex";
 $::opt_luatexcmd  = "luatex";
@@ -378,7 +377,6 @@ Options:                                                       (defaults:)
   --version           print version number
   --(no)verbose       verbose printing                         ($bool[$::opt_verbose])
   --(no)debug         debug informations                       ($bool[$::opt_debug])
-  --(no)quiet         suppress routine output                  ($bool[$::opt_quiet])
   --gscmd <name>      call of ghostscript                      ($::opt_gscmd)
   --pdftex | --xetex | --luatex
                       use pdfTeX | use XeTeX | use LuaTeX      ($::opt_tex)
@@ -443,7 +441,6 @@ GetOptions(
   "version!",
   "debug!",
   "verbose!",
-  "quiet!",
   "gscmd=s",
   "pdftexcmd=s",
   "xetexcmd=s",
@@ -475,7 +472,7 @@ $::opt_verbose = 1 if $::opt_debug;
 
 @ARGV >= 1 or usage(1);
 
-print $title unless $::opt_quiet;
+print $title if $::opt_verbose;
 
 print "* Restricted mode: ", ($restricted ? "enabled" : "disabled"), "\n"
         if $::opt_debug;
@@ -1258,7 +1255,7 @@ if (!rename("$tmp.pdf", $outputfile)) {
 }
 
 print "==> $page page", (($page == 1) ? "" : "s"),
-      " written on `$outputfile'.\n" unless $::opt_quiet;
+      " written on `$outputfile'.\n" if $::opt_verbose;
 
 $exit_code = 0;
 cleanup();
