@@ -472,7 +472,7 @@ $::opt_verbose = 1 if $::opt_debug;
 
 @ARGV >= 1 or usage(1);
 
-print $title;
+print $title if $::opt_verbose;
 
 print "* Restricted mode: ", ($restricted ? "enabled" : "disabled"), "\n"
         if $::opt_debug;
@@ -1255,7 +1255,7 @@ if (!rename("$tmp.pdf", $outputfile)) {
 }
 
 print "==> $page page", (($page == 1) ? "" : "s"),
-      " written on `$outputfile'.\n";
+      " written on `$outputfile'.\n" if $::opt_verbose;
 
 $exit_code = 0;
 cleanup();
