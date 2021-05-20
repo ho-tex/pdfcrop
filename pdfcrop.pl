@@ -365,6 +365,7 @@ $::opt_bbox_even  = "";
 $::opt_initex     = 0;
 $::opt_pdfversion = "auto";
 $::opt_uncompress = 0;
+$::opt_overwrite  = 0;
 
 sub usage ($) {
     my $ret = shift;
@@ -412,7 +413,9 @@ Expert options:
                       An empty value or `none' uses the
                       default of the TeX engine.               ($::opt_pdfversion)
   --uncompress        creates an uncompressed pdf, 
-                      useful for debugging                     ($bool[$::opt_uncompress])                     
+                      useful for debugging                     ($bool[$::opt_uncompress])
+  --overwrite         Overwrite the pdf with the
+                      cropped version.                         ($bool[$::opt_overwrite])
 
 Input file: If the name is `-', then the standard input is used and
   the output file name must be explicitly given.
@@ -460,6 +463,7 @@ GetOptions(
   "restricted" => sub { $restricted = 1; },
   "pdfversion=s" => \$::opt_pdfversion,
   "uncompress!",
+  "overwrite!",
 ) or usage(1);
 !$::opt_help or usage(0);
 
@@ -545,7 +549,10 @@ else {
 }
 
 ### output file
-if (@ARGV) {
+if ($::opt_overwrite) {
+    $outputfile = $inputfile;
+}
+elsif (@ARGV) {
     $outputfile = shift @ARGV;
 }
 else {
