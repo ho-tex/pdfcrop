@@ -707,7 +707,7 @@ elsif (not $inputfile =~ /^[\w\d\.\-\:\/@]+$/) { # /[\s\$~'"#{}%]/
           . "* " . ($symlink_exists ? "Link" : "Copy")
           . " input file to temporary file `$inputfilesafe'.\n"
             if $::opt_verbose;
-    if ($symlink_exists) {
+    if (not $Win and $symlink_exists) {
         symlink($inputfile, $inputfilesafe)
             or die sprintf "$Error Link from `%s' to `%s' failed (%s)!\n",
                            $inputfile, $inputfilesafe, exterr;
