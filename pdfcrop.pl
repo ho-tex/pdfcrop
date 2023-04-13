@@ -221,11 +221,11 @@ sub find_ghostscript () {
         $found = SearchRegistry();
     }
     if ($found) {
-        print "* Autodetected ghostscript command: $::opt_gscmd\n" if $::opt_debug;
+        print "* Autodetected Ghostscript command: $::opt_gscmd\n" if $::opt_debug;
     }
     else {
         $::opt_gscmd = $$candidates_ref[0];
-        print "* Default ghostscript command: $::opt_gscmd\n" if $::opt_debug;
+        print "* Default Ghostscript command: $::opt_gscmd\n" if $::opt_debug;
     }
 }
 
@@ -492,7 +492,7 @@ if ($::opt_bbox) {
     $::opt_bbox =~ s/\s+$//;
     $::opt_bbox =~ s/\s+/ /;
     if ($::opt_bbox =~ /^-?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+$/) {
-        print "* Explicite Bounding Box: $::opt_bbox\n" if $::opt_debug;
+        print "* Explicit Bounding Box: $::opt_bbox\n" if $::opt_debug;
     }
     else {
         die "$Error Parse error (option --bbox \"$::opt_bbox\")!\n";
@@ -503,7 +503,7 @@ if ($::opt_bbox_odd) {
     $::opt_bbox_odd =~ s/\s+$//;
     $::opt_bbox_odd =~ s/\s+/ /;
     if ($::opt_bbox_odd =~ /^-?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+$/) {
-        print "* Explicite Bounding Box for odd pages: $::opt_bbox_odd\n"
+        print "* Explicit Bounding Box for odd pages: $::opt_bbox_odd\n"
                 if $::opt_debug;
     }
     else {
@@ -515,7 +515,7 @@ if ($::opt_bbox_even) {
     $::opt_bbox_even =~ s/\s+$//;
     $::opt_bbox_even =~ s/\s+/ /;
     if ($::opt_bbox_even =~ /^-?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+$/) {
-        print "* Explicite Bounding Box for even pages: $::opt_bbox_even\n"
+        print "* Explicit Bounding Box for even pages: $::opt_bbox_even\n"
                 if $::opt_debug;
     }
     else {
@@ -583,14 +583,14 @@ if ($::opt_papersize ne '') {
             or die "$Error Invalid papersize ($::opt_papersize)!\n";
     $papersizes{$::opt_papersize}
             or die "$Error Unknown papersize ($::opt_papersize),"
-                   . " see ghostscript's documentation for option `-r'!\n";
+                   . " see Ghostscript's documentation for option `-r'!\n";
 }
 
 ### resolution validation (security)
 if ($::opt_resolution ne '') {
     $::opt_resolution =~ /^\d+(x\d+)?$/
             or die "$Error Invalid resolution ($::opt_resolution),"
-                   . " see ghostscript's documentation!\n";
+                   . " see Ghostscript's documentation!\n";
 }
 
 ### command name validation (security)
@@ -1042,7 +1042,7 @@ END_TMP_HEAD
 print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion; 
 }
 
-print "* Running ghostscript for BoundingBox calculation ...\n"
+print "* Running Ghostscript for BoundingBox calculation ...\n"
     if $::opt_verbose;
 print "* Ghostscript call: $::opt_gscmd @gsargs\n" if $::opt_debug;
 
@@ -1090,7 +1090,7 @@ $gs_pipe .= " 1>$null" unless $::opt_verbose;
 $gs_pipe .= " |";
 
 open(GS, $gs_pipe)
-        or die sprintf "$Error Cannot call ghostscript `%s' (%s)!\n",
+        or die sprintf "$Error Cannot call Ghostscript: `%s' (%s)!\n",
                        $::opt_gscmd, exterr;
 my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
 my $previous_line = 'Previous line';
