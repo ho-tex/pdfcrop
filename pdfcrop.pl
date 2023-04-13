@@ -633,7 +633,7 @@ if ($restricted) {
         die "$Error LuaTeX program name must not be changed in restricted mode!\n";
     }
     if ($::opt_gscmd) {
-        $::opt_gscmd =~ /^(gs|mgs|gswin32c|gs386|gsos2)$/
+        $::opt_gscmd =~ /^(gs|mgs|gswin32c|gs386|gsos2|gswin64c)$/
         or $::opt_gscmd =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?$/
         or die "$Error: Invalid Ghostscript program name in restricted mode!\n";
     }
