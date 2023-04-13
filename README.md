@@ -251,7 +251,10 @@ My environment for developing and testing:
 |--               | \*  corrected a problem with xetex.|
 |2020/06/06 v1.40:| \* improved ghostscript detection on windows when a bash is used|
 |--               | \* added direct pdfversion support to xetex.| 
-|2023/04/13 v1.41:| \* allow gswin64c in restricted mode, fix typos in messages issues 14, 17|                      
+|2023/04/13 v1.41:| \* allow gswin64c in restricted mode, fix typos in messages issues 14, 17|
+|--               | \* add -q option;
+|--               | \* don't print whole help msg for unknown options.
+
 
 ## 13. TODO
 
