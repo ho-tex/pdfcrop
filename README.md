@@ -135,7 +135,7 @@ This mode sets restrictions for the following options:
 * `--luatexcmd`: if used, the value must be empty or `luatex`.
 * `--gscmd`: if used, the value must
   * be empty or
-  * be one of the standard names (gs, gswin32c, mgs, gs386, gsos2) or
+  * be one of the standard names (gs, gswin32c, gswin64c, mgs, gs386, gsos2) or
   * consists of `gs`, followed by a version number and an
       optional `c` (Ghostscript's convention for `console version`).
 
