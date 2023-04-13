@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 # pdfcrop.pl
 #
 # Copyright (C) 2002, 2004, 2005, 2008-2012 Heiko Oberdiek.
-#               2020                        Oberdiek Package Support Group
+#               2020-2023                   Oberdiek Package Support Group
 #
 # This program may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, version 1.3c or later.
@@ -18,10 +18,10 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.40";
-my $date        = "2020/06/06";
+my $version     = "1.41";
+my $date        = "2023/04/13";
 my $author      = "Heiko Oberdiek, Oberdiek Package Support Group";
-my $copyright   = "Copyright (c) 2002-2020 by $author.";
+my $copyright   = "Copyright (c) 2002-2023 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -106,8 +106,8 @@ my $copyright   = "Copyright (c) 2002-2020 by $author.";
 # 2020/05/24 v1.39: * adapted to pdfversion 2.0, corrected luatex support,
 #                      corrected a problem with xetex.
 # 2020/06/06 v1.40: * improved ghostscript detection on windows when a bash is used
-#                      added direct pdf version support to xetex. 
-
+#                      added direct pdf version support to xetex.
+#2023/04/13 v1.41:  * allow gswin64c in restricted mode, fix typos in messages issues 14, 17                      
 
 
 ### program identification
@@ -122,6 +122,7 @@ delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 # Windows detection (no SIGHUP)
 my $Win = 0;
 $Win = 1 if $^O =~ /mswin32/i;
+$Win = 1 if $^O =~ /windows/i;
 $Win = 1 if $^O =~ /cygwin/i;
 use Config;
 my $archname = $Config{'archname'};
@@ -166,6 +167,7 @@ sub find_ghostscript () {
     $system = "dos" if $^O =~ /dos/i;
     $system = "os2" if $^O =~ /os2/i;
     $system = "win" if $^O =~ /mswin32/i;
+    $system = "win" if $^O =~ /windows/i;
     $system = "cygwin" if $^O =~ /cygwin/i;
     $system = "miktex" if defined($ENV{"TEXSYSTEM"}) and
                           $ENV{"TEXSYSTEM"} =~ /miktex/i;
@@ -176,7 +178,7 @@ sub find_ghostscript () {
         'unix' => [qw|gs gsc gswin64c gswin32c|],
         'dos' => [qw|gs386 gs|],
         'os2' => [qw|gsos2 gs|],
-        'win' => [qw|gswin32c gs|],
+        'win' => [qw|gswin32c gswin64c gs|],
         'cygwin' => [qw|gs gswin32c|],
         'miktex' => [qw|mgs gswin32c gs|]
     );

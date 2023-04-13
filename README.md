@@ -1,6 +1,6 @@
 # pdfcrop
 
-Version: 2020/06/06 v1.40
+Version: 2023/04/13 v1.41
 
 
 ## TABLE OF CONTENTS
@@ -28,7 +28,7 @@ PDF file with removed margins.
 ## 2\. COPYRIGHT, DISCLAIMER, LICENSE
 
 Copyright (C) 2002, 2004, 2005, 2008-2012 Heiko Oberdiek.
-              2020                        Oberdiek Package Support Group
+              2020-2023                   Oberdiek Package Support Group
 
 LaTeX Project Public License, version 1.3c or later.
 
@@ -251,7 +251,7 @@ My environment for developing and testing:
 |--               | \*  corrected a problem with xetex.|
 |2020/06/06 v1.40:| \* improved ghostscript detection on windows when a bash is used|
 |--               | \* added direct pdfversion support to xetex.| 
-                      
+|2023/04/13 v1.41:| \* allow gswin64c in restricted mode, fix typos in messages issues 14, 17|                      
 
 ## 13. TODO
 
