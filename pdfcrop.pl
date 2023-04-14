@@ -107,10 +107,10 @@ my $copyright   = "Copyright (c) 2002-2023 by $author.";
 #                      corrected a problem with xetex.
 # 2020/06/06 v1.40: * improved ghostscript detection on windows when a bash is used
 #                      added direct pdf version support to xetex.
-# 2023/04/13 v1.41:  * allow gswin64c in restricted mode, fix typos in messages issues 14, 17
-#                      add -q option;
-#                      don't print whole help msg for unknown options.
-#                      do not create two pages with xetex, issue 3 
+# 2023/04/13 v1.41: * allow gswin64c in restricted mode, fix typos in messages issues 14, 17
+#                     add -q option, issue 7;
+#                     don't print whole help msg for unknown options, issue 7.
+#                     do not create two pages with xetex, issue 3 
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
