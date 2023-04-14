@@ -110,6 +110,7 @@ my $copyright   = "Copyright (c) 2002-2023 by $author.";
 # 2023/04/13 v1.41:  * allow gswin64c in restricted mode, fix typos in messages issues 14, 17
 #                      add -q option;
 #                      don't print whole help msg for unknown options.
+#                      do not create two pages with xetex, issue 3 
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -997,7 +998,7 @@ END_TMP_HEAD
     print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;    
 }  
 else { # XeTeX
-    print TMP <<'END_TMP_HEAD';
+    print TMP <<'END_TMP_HEAD_A';
 \expandafter\ifx\csname XeTeXpdffile\endcsname\relax
   \errmessage{XeTeX not found or too old!}%
 \fi
@@ -1015,6 +1016,9 @@ else { # XeTeX
   \pdfpageheight=#5bp\relax
   \advance\pdfpageheight by -#3bp\relax
   \shipout\hbox{%
+END_TMP_HEAD_A
+print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}%\n" if $::opt_pdfversion; 
+print TMP <<'END_TMP_HEAD_B';
     \kern-1in%
     \kern-#2bp%
     \vbox{%
@@ -1044,8 +1048,7 @@ else { # XeTeX
     }%
   }%
 }
-END_TMP_HEAD
-print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion; 
+END_TMP_HEAD_B
 }
 
 print "* Running Ghostscript for BoundingBox calculation ...\n"
