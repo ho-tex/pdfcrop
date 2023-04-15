@@ -381,8 +381,9 @@ Options:                                                       (defaults:)
   --help              print usage
   --version           print version number
   --(no)verbose       verbose printing                         ($bool[$::opt_verbose])
-  --(no)debug         debug informations                       ($bool[$::opt_debug])
-  --gscmd <name>      call of ghostscript                      ($::opt_gscmd)
+  --(no)quiet         silence normal output                    ($bool[$::opt_quiet])
+  --(no)debug         debug information                        ($bool[$::opt_debug])
+  --gscmd <name>      call of Ghostscript                      ($::opt_gscmd)
   --pdftex | --xetex | --luatex
                       use pdfTeX | use XeTeX | use LuaTeX      ($::opt_tex)
   --pdftexcmd <name>  call of pdfTeX                           ($::opt_pdftexcmd)
@@ -390,11 +391,11 @@ Options:                                                       (defaults:)
   --luatexcmd <name>  call of LuaTeX                           ($::opt_luatexcmd)
   --margins "<left> <top> <right> <bottom>"                    ($::opt_margins)
                       add extra margins, unit is bp. If only one number is
-                      given, then it is used for all margins, in the case
-                      of two numbers they are also used for right and bottom.
+                      given, then it is used for all margins; in the case
+                      of two numbers, they are also used for right and bottom.
   --(no)clip          clipping support, if margins are set     ($bool[$::opt_clip])
                       (not available for --xetex)
-  --(no)hires         using `%%HiResBoundingBox'               ($bool[$::opt_hires])
+  --(no)hires         use `%%HiResBoundingBox'                 ($bool[$::opt_hires])
                       instead of `%%BoundingBox'
   --(no)ini           use iniTeX variant of the TeX compiler   ($bool[$::opt_initex])
 Expert options:
@@ -402,22 +403,21 @@ Expert options:
   --papersize <foo>   parameter for gs's -sPAPERSIZE=<foo>,
                       use only with older gs versions <7.32    ($::opt_papersize)
   --resolution <xres>x<yres>                                   ($::opt_resolution)
-  --resolution <res>  pass argument to ghostscript's option -r
+  --resolution <res>  pass argument to Ghostscript's option -r
                       Example: --resolution 72
   --bbox "<left> <bottom> <right> <top>"                       ($::opt_bbox)
-                      override bounding box found by ghostscript
+                      override bounding box found by Ghostscript
                       with origin at the lower left corner
   --bbox-odd          Same as --bbox, but for odd pages only   ($::opt_bbox_odd)
   --bbox-even         Same as --bbox, but for even pages only  ($::opt_bbox_even)
   --pdfversion <x.y> | auto | none
-                      Set the PDF version to x.y, x= 1 or 2, y=0-9.
+                      Set the PDF version to x.y, x= 1 or 2, y= 0-9.
                       If `auto' is given as value, then the
                       PDF version is taken from the header
                       of the input PDF file.
                       An empty value or `none' uses the
                       default of the TeX engine.               ($::opt_pdfversion)
-  --uncompress        creates an uncompressed pdf, 
-                      useful for debugging                     ($bool[$::opt_uncompress])                     
+  --uncompress        create uncompressed pdf, for debugging   ($bool[$::opt_uncompress])                     
 
 Input file: If the name is `-', then the standard input is used and
   the output file name must be explicitly given.
