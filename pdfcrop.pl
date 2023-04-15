@@ -18,8 +18,8 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.41";
-my $date        = "2023/04/13";
+my $version     = "1.42";
+my $date        = "2023/04/15";
 my $author      = "Heiko Oberdiek, Oberdiek Package Support Group";
 my $copyright   = "Copyright (c) 2002-2023 by $author.";
 #
@@ -111,6 +111,7 @@ my $copyright   = "Copyright (c) 2002-2023 by $author.";
 #                     add -q option, issue 7;
 #                     don't print whole help msg for unknown options, issue 7.
 #                     do not create two pages with xetex, issue 3 
+# 2023/04/15 v1.42: * update help text issue 18
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";

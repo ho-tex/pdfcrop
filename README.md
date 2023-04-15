@@ -1,6 +1,6 @@
 # pdfcrop
 
-Version: 2023/04/13 v1.41
+Version: 2023/04/15 v1.42
 
 
 ## TABLE OF CONTENTS
@@ -255,7 +255,7 @@ My environment for developing and testing:
 |--               | \* add -q option, issue 7 |
 |--               | \* don't print whole help msg for unknown options, issue 7.|
 |--               | \* do not create two pages with xetex, issue 3|
-
+|2023/04/15 v1.42:| \* update help text issue 18|
 
 ## 13. TODO
 
